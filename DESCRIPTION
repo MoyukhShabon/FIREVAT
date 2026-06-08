@@ -33,7 +33,8 @@ Imports:
     BSgenome.Hsapiens.UCSC.hg19,
     BSgenome.Hsapiens.UCSC.hg38,
     MutationalPatterns,
-    deconstructSigs
+    deconstructSigs,
+    reshape2
 biocViews: 
     CancerGenomics, 
     VariantRefinement, 
