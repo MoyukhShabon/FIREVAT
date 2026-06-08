@@ -391,7 +391,7 @@ WriteFIREVATResultsToTSV <- function(firevat.results) {
     df.save <- data.frame(save.list,
                           stringsAsFactors = F)
     write.table(df.save,
-                paste0(firevat.results$output.dir, firevat.results$vcf.file.basename, "_FIREVAT_data.tsv"),
+                file.path(firevat.results$report.dir, paste0(firevat.results$vcf.file.basename, "_FIREVAT_analysis.tsv")),
                 sep = "\t", row.names = F)
 }
 
