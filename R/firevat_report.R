@@ -18,8 +18,7 @@
 #'
 #' @export
 ReadOptimizationIterationReport <- function(data) {
-    log.file <- paste0(data$output.dir,
-                       data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv")
+    log.file <- file.path(data$logs.dir, paste0(data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv"))
     df <- read.table(log.file, sep = "\t",
                      header = TRUE,
                      na.strings = "",
@@ -570,11 +569,10 @@ PrepareOptimizedVCFStatisticsPlot <- function(data) { # COMMON_8
         plot.cutoff.value.lines = T,
         stat.y.max.vals = stat.y.max.vals,
         stat.x.max.vals = stat.x.max.vals,
-        save.file = paste0(
-            data$output.dir,
+        save.file = file.path(data$report.dir, paste0(
             data$vcf.file.basename,
             "_FIREVAT_Original_VCF_Stats_Histograms.png"
-        )
+        ))
     )
     # Plot VCF statistics - refined vcf
     refined.vcf.stats.plots <- PlotVCFStatsHistograms(
@@ -587,11 +585,10 @@ PrepareOptimizedVCFStatisticsPlot <- function(data) { # COMMON_8
         stat.y.max.vals = stat.y.max.vals,
         stat.x.max.vals = stat.x.max.vals,
         sample.id = data$vcf.file.basename,
-        save.file = paste0(
-            data$output.dir,
+        save.file = file.path(data$report.dir, paste0(
             data$vcf.file.basename,
             "_FIREVAT_Refined_VCF_Stats_Histograms.png"
-        )
+        ))
     )
     # Plot VCF statistics - artifactual vcf
     artifact.vcf.stats.plots <- PlotVCFStatsHistograms(
@@ -604,11 +601,10 @@ PrepareOptimizedVCFStatisticsPlot <- function(data) { # COMMON_8
         stat.y.max.vals = stat.y.max.vals,
         stat.x.max.vals = stat.x.max.vals,
         sample.id = data$vcf.file.basename,
-        save.file = paste0(
-            data$output.dir,
+        save.file = file.path(data$report.dir, paste0(
             data$vcf.file.basename,
             "_FIREVAT_Artifact_VCF_Stats_Histograms.png"
-        )
+        ))
     )
     # Merge the plots
     vcf.stats.boxplots <- list()
@@ -762,9 +758,13 @@ PrepareRefinedMutsOptimizationIterationsPlot <- function(data) { # Optional_2
         x.min = min(df.temp$iteration),
         x.max = max(df.temp$iteration),
         legend.ncol = 2,
-        save.file = paste0(data$output.dir,
-                           data$vcf.file.basename,
-                           "_FIREVAT_Optimization_Iterations.png"),
+        save.file = file.path(
+                            data$report.dir, 
+                            paste0(
+                                data$vcf.file.basename,
+                                "_FIREVAT_Optimization_Iterations.png"
+                            )
+                        ),
         connect.dots = T
     )
     return(optimization.iter.plot)
@@ -851,12 +851,11 @@ PrepareArtifactualMutsOptimizationIterationsPlot <- function(data) { # Optional_
             "Weights at Each Iteration"
         ),
         legend.ncol = 7,
-        save.file = paste0(
-            data$output.dir,
+        save.file = file.path(data$report.dir, paste0(
             data$vcf.file.basename,
             "_FIREVAT_Optimization_Iterations_Artifactual_Muts",
             "_Seq_Art_Sigs_Weights.png"
-        ),
+        )),
         connect.dots = T)
     return(artifactual.muts.seq.art.iter.plot)
 }
@@ -948,7 +947,7 @@ PrepareRefinedStrandBiasTable <- function(data) {
     df <- as.data.frame(vcf.obj$data)
     df <- df[, cols.to.display]
     df$POS <- format(x = df$POS, big.mark = ",")
-    df <- df[order(df[stat.sig.value.col]),]
+    df <- df[order(df[, stat.sig.value.col]),]
     return(df)
 }
 
@@ -992,7 +991,7 @@ PrepareArtifactStrandBiasTable <- function(data) {
     df <- as.data.frame(vcf.obj$data)
     df <- df[, cols.to.display]
     df$POS <- format(x = df$POS, big.mark = ",")
-    df <- df[order(df[stat.sig.value.col]),]
+    df <- df[order(df[, stat.sig.value.col]),]
     return(df)
 }
 
@@ -1050,8 +1049,8 @@ ReportFIREVATResults <- function(data) {
         rmarkdown::render(input = rmarkdown.file,
                           params = list(data = data,
                                         report.items = report.items),
-                          output_dir = data$output.dir,
-                          intermediates_dir = data$output.dir,
+                          output_dir = data$report.dir,
+                          intermediates_dir = file.path(data$report.dir, "intermediates"),
                           output_file = paste0(data$vcf.file.basename,
                                                "_FIREVAT_Report.html"))
     }
