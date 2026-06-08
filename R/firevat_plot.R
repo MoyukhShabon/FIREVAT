@@ -271,7 +271,7 @@ PlotOptimizationIterations <- function(df,
 
     df.temp <- df[,c(x.axis.var, columns.to.plot)]
     df.temp[,x.axis.var] <- as.numeric(as.character(df.temp[, x.axis.var]))
-    m <- melt(df.temp, id.vars = x.axis.var)
+    m <- reshape2::melt(df.temp, id.vars = x.axis.var)
     g <- ggplot(m, aes_string(x = x.axis.var, y = "value", colour = "variable")) +
         geom_point(size = point.size) +
         geom_line(size = 1) +
