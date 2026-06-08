@@ -92,6 +92,7 @@ WriteVCF <- function(vcf.obj, save.file) {
                     sep = "\t",
                     col.names = F,
                     row.names = F,
+                    na = ".",
                     quote = F,
                     append = T,
                     file = save.file)
