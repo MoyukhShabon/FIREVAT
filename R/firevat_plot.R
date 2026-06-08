@@ -248,7 +248,7 @@ PlotVCFStatsBoxPlots <- function(original.vcf.stat.values,
 #'
 #' @import ggplot2
 #' @import ggpubr
-#' @importFrom data.table melt
+#' @importFrom reshape2 melt
 #' @export
 PlotOptimizationIterations <- function(df,
                                        columns.to.plot,
