@@ -8,6 +8,23 @@
 
 ## Getting started
 
+### Updated Installation (Requires Conda)
+
+Install FIREVAT with a few fixes applied:
+```
+git clone https://github.com/MoyukhShabon/FIREVAT.git
+cd FIREVAT
+conda env create -f firevat_conda.yml
+conda activate firevat
+R CMD INSTALL .
+
+```
+
+Verify installation:
+```
+Rscript -e 'library(FIREVAT); packageVersion("FIREVAT")'
+```
+
 ### Installation
 
 To install the developmental version of ```FIREVAT``` from GitHub:
