@@ -511,7 +511,7 @@ GAMonitorFn <- function(obj, data) {
     }
 
     # Write iteration to log file
-    log.file <- paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv")
+    log.file <- file.path(data$logs.dir, paste0(data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv"))
     if (!file.exists(log.file)) {
         write.table(df.log, log.file, row.names = F, sep = "\t")
     } else {
