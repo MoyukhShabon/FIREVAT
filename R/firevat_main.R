@@ -7,6 +7,11 @@
 #   Andy Jinseok Lee (jinseok.lee@ncc.re.kr)
 #   Hyunbin Kim (khb7840@ncc.re.kr)
 #   Bioinformatics Analysis Team, National Cancer Center Korea
+# 
+# Additional revisions by:
+#   Moyukh Shabon Khan
+#   University of Hong Kong
+#   Date: June 6, 2026
 
 
 #' @title RunGAMode
@@ -56,7 +61,7 @@ RunGAMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Initial sequencing artifact weights sum is less than or equal to init.artifact.stop"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -71,7 +76,7 @@ RunGAMode <- function(data) {
         data$variant.refinement.performed <- FALSE
         data$variant.refinement.terminiation.log <- "Config file parameter filter range is invalid."
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -103,7 +108,7 @@ RunGAMode <- function(data) {
         suggestions <- data$suggested.solutions.matrix
 
         # Write to log file
-        log.file <- paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv")
+        log.file <- file.path(data$logs.dir, paste0(data$vcf.file.basename, "_FIREVAT_Optimization_Logs.tsv"))
         write.table(data$df.suggested.solutions, log.file, row.names = F, sep = "\t")
     } else {
         suggestions <- NULL
@@ -205,7 +210,7 @@ RunGAMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Successful but after performing variant refinement there are no mutations remaining in the refined set"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -217,7 +222,7 @@ RunGAMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Successful but after performing variant refinement there are no mutations remaining in the artifactual set"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -232,7 +237,7 @@ RunGAMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Unsuccessful because there are not enough mutations for variant refinement"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -377,18 +382,18 @@ RunGAMode <- function(data) {
         PrintLog("Step 04. Write refined and artifactual VCF files [firevat_vcf::WriteVCF]")
 
         WriteVCF(vcf.obj = data$vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Original.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Original.vcf")))
         WriteVCF(vcf.obj = data$refined.vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Refined.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Refined.vcf")))
         WriteVCF(vcf.obj = data$artifactual.vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Artifact.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Artifact.vcf")))
         if (data$annotate == TRUE) {
-            WriteVCF(vcf.obj = data$data$vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Original_Annotated.vcf"))
+            WriteVCF(vcf.obj = data$vcf.obj.annotated,
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Original_Annotated.vcf")))
             WriteVCF(vcf.obj = data$refined.vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Refined_Annotated.vcf"))
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Refined_Annotated.vcf")))
             WriteVCF(vcf.obj = data$artifactual.vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Artifact_Annotated.vcf"))
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Artifact_Annotated.vcf")))
         }
     }
 
@@ -404,13 +409,42 @@ RunGAMode <- function(data) {
     # 06. Save data
     if (data$save.rdata == TRUE) {
         PrintLog("Step 06. Write .RData")
-        save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+        save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
     }
 
     # 07. Save tsv
     if (data$save.tsv == TRUE) {
         PrintLog("Step 07. Write FIREVAT results to .tsv file")
         WriteFIREVATResultsToTSV(firevat.results = data)
+    }
+
+    # 08. Save scores TSV
+    if (data$save.scores) {
+        PrintLog("Step 08. Write FIREVAT variant results to .tsv file")
+
+        MakeScoreDF <- function(vcf.obj, score) {
+            d <- as.data.frame(vcf.obj$data)   # safe for data.table or data.frame
+            data.frame(
+                chrom         = d$CHROM,
+                pos           = d$POS,
+                ref           = d$REF,
+                alt           = d$ALT,
+                score_firevat = score,
+                stringsAsFactors = FALSE
+            )
+        }
+
+        refined_df   <- MakeScoreDF(data$refined.vcf.obj,     1)
+        artifacts_df <- MakeScoreDF(data$artifactual.vcf.obj, 0)
+
+        scores_df <- rbind(refined_df, artifacts_df)
+
+        write.table(
+            scores_df,
+            file = file.path(data$output.dir,
+                            paste0(data$vcf.file.basename, ".firevat.tsv")),
+            sep = "\t", row.names = FALSE, quote = FALSE
+        )
     }
 
     return(data)
@@ -448,7 +482,7 @@ RunManualMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Successful but after performing variant refinement there are no mutations remaining in the refined set"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -460,7 +494,7 @@ RunManualMode <- function(data) {
         data$end.datetime <- Sys.time()
         data$variant.refinement.terminiation.log <- "Successful but after performing variant refinement there are no mutations remaining in the artifactual set"
         if (data$save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (data$save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
@@ -563,18 +597,18 @@ RunManualMode <- function(data) {
         PrintLog("Step 04. Write refined and artifactual VCF files [firevat_vcf::WriteVCF]")
 
         WriteVCF(vcf.obj = data$vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Original.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Original.vcf")))
         WriteVCF(vcf.obj = data$refined.vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Refined.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Refined.vcf")))
         WriteVCF(vcf.obj = data$artifactual.vcf.obj,
-                 save.file = paste0(data$output.dir, data$vcf.file.basename, "_Artifact.vcf"))
+                 save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Artifact.vcf")))
         if (data$annotate == TRUE) {
-            WriteVCF(vcf.obj = data$data$vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Original_Annotated.vcf"))
+            WriteVCF(vcf.obj = data$vcf.obj.annotated,
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Original_Annotated.vcf")))
             WriteVCF(vcf.obj = data$refined.vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Refined_Annotated.vcf"))
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Refined_Annotated.vcf")))
             WriteVCF(vcf.obj = data$artifactual.vcf.obj.annotated,
-                     save.file = paste0(data$output.dir, data$vcf.file.basename, "_Artifact_Annotated.vcf"))
+                     save.file = file.path(data$vcf.dir, paste0(data$vcf.file.basename, "_Artifact_Annotated.vcf")))
         }
     }
 
@@ -589,13 +623,42 @@ RunManualMode <- function(data) {
     # 06. Save data
     if (data$save.rdata == TRUE) {
         PrintLog("Step 06. Write .RData")
-        save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+        save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
     }
 
     # 07. Save tsv
     if (data$save.tsv == TRUE) {
         PrintLog("Step 07. Write FIREVAT results to .tsv file")
         WriteFIREVATResultsToTSV(firevat.results = data)
+    }
+
+    # 08. Save scores TSV
+    if (data$save.scores) {
+        PrintLog("Step 08. Write FIREVAT variant results to .tsv file")
+
+        MakeScoreDF <- function(vcf.obj, score) {
+            d <- as.data.frame(vcf.obj$data)   # safe for data.table or data.frame
+            data.frame(
+                chrom         = d$CHROM,
+                pos           = d$POS,
+                ref           = d$REF,
+                alt           = d$ALT,
+                score_firevat = score,
+                stringsAsFactors = FALSE
+            )
+        }
+
+        refined_df   <- MakeScoreDF(data$refined.vcf.obj,     1)
+        artifacts_df <- MakeScoreDF(data$artifactual.vcf.obj, 0)
+
+        scores_df <- rbind(refined_df, artifacts_df)
+
+        write.table(
+            scores_df,
+            file = file.path(data$output.dir,
+                            paste0(data$vcf.file.basename, ".firevat.tsv")),
+            sep = "\t", row.names = FALSE, quote = FALSE
+        )
     }
 
     return(data)
@@ -730,6 +793,7 @@ RunFIREVAT <- function(vcf.file,
                        report = TRUE,
                        save.rdata = TRUE,
                        save.tsv = TRUE,
+                       save.scores = TRUE,
                        report.format = "html",
                        verbose = TRUE) {
     # 00. Check input parameters
@@ -792,13 +856,27 @@ RunFIREVAT <- function(vcf.file,
         }
     }
 
+    # 01-1b. Create output subdirectories (vcf / rdata / logs)
+    vcf.dir <- file.path(output.dir, "vcf")
+    rdata.dir <- file.path(output.dir, "rdata")
+    logs.dir <- file.path(output.dir, "logs")
+    report.dir <- file.path(output.dir, "report")
+    for (sub.dir in c(vcf.dir, rdata.dir, logs.dir, report.dir)) {
+        if (dir.exists(sub.dir) == FALSE) {
+            dir.create(sub.dir, recursive = TRUE)
+            if (verbose == TRUE) {
+                PrintLog(paste0("Step 01-1. Created output subdirectory at ", sub.dir))
+            }
+        }
+    }
+
     # Remove existing '*FIREVAT_Optimization_Logs.tsv'
-    existing.firevat.optimization.log.tsv.file <- list.files(output.dir, pattern = "*FIREVAT_Optimization_Logs.tsv")
+    existing.firevat.optimization.log.tsv.file <- list.files(logs.dir, pattern = "*FIREVAT_Optimization_Logs.tsv")
     if (identical(existing.firevat.optimization.log.tsv.file, character(0)) == FALSE) {
         # Remove
         PrintLog(paste0("Removing existing FIREVAT optimization logs (tsv) file: ",
                         existing.firevat.optimization.log.tsv.file))
-        file.remove(paste0(output.dir, existing.firevat.optimization.log.tsv.file))
+        file.remove(file.path(logs.dir, existing.firevat.optimization.log.tsv.file))
     }
 
     # 02. Read the vcf file
@@ -818,9 +896,12 @@ RunFIREVAT <- function(vcf.file,
                               verbose = verbose)
     vcf.obj <- vcf.objs$vcf.obj.filtered
 
+    ## Extract sample name
+    vcf.file.basename <- gsub("\\.vcf$", "", gsub("\\.gz$", "", basename(vcf.file)))
+
     # Write the unidentifiable data
     WriteVCF(vcf.obj = vcf.objs$vcf.obj.artifact,
-             save.file = paste0(output.dir, gsub("\\.vcf", "", basename(vcf.file)), "_Unknown.vcf"))
+             save.file = file.path(vcf.dir, paste0(vcf.file.basename, "_Unknown.vcf")))
 
     # 05. Make filter from config file
     PrintLog("Step 01-5. Make VCF filter [firevat_filter::MakeFilter]")
@@ -829,7 +910,7 @@ RunFIREVAT <- function(vcf.file,
     # 06. Prepare data for optimization
     PrintLog("Step 01-6. Prepare data for optimization")
     data = list(vcf.file = vcf.file,
-                vcf.file.basename = gsub("\\.vcf", "", basename(vcf.file)),
+                vcf.file.basename = vcf.file.basename,
                 vcf.obj = vcf.obj,
                 vcf.filter = vcf.filter,
                 config.file = config.file,
@@ -839,6 +920,10 @@ RunFIREVAT <- function(vcf.file,
                 df.ref.mut.sigs.groups.colors = df.ref.mut.sigs.groups.colors,
                 sequencing.artifact.mut.sigs = sequencing.artifact.mut.sigs,
                 output.dir = output.dir,
+                vcf.dir = vcf.dir,
+                rdata.dir = rdata.dir,
+                logs.dir = logs.dir,
+                report.dir = report.dir,
                 mode = mode,
                 num.cores = num.cores,
                 init.artifact.stop = init.artifact.stop,
@@ -882,6 +967,7 @@ RunFIREVAT <- function(vcf.file,
                 report = report,
                 save.rdata = save.rdata,
                 save.tsv = save.tsv,
+                save.scores = save.scores,
                 report.format = report.format,
                 verbose = verbose)
 
@@ -893,7 +979,7 @@ RunFIREVAT <- function(vcf.file,
         data$variant.refinement.performed <- FALSE
         data$variant.refinement.terminiation.log <- "Not enough point mutations (less than or equal 50)"
         if (save.rdata == TRUE) {
-            save(data, file = paste0(data$output.dir, data$vcf.file.basename, "_FIREVAT_data.RData"))
+            save(data, file = file.path(data$rdata.dir, paste0(data$vcf.file.basename, "_FIREVAT_data.RData")))
         }
         if (save.tsv == TRUE) {
             WriteFIREVATResultsToTSV(firevat.results = data)
