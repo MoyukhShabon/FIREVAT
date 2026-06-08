@@ -175,7 +175,6 @@ Rscript firevat_run_minimal.R \
 | `--config` | No | packaged `GATK4_Mutect2_config_Tumor_Normal_SB.json` | Path to FIREVAT config file |
 | `--num-cores` | No | `2` | Number of CPU cores |
 | `--genome` | No | `hg38` | Reference genome: `hg38`, `hg19`, or `mm10` |
-```
 
 ## Paper
 
