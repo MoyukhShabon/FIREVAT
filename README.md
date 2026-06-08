@@ -113,7 +113,10 @@ Feel free to take a look at the sample [**HTML report**](https://cgab-ncc.github
 
 For your convenience, we have prepared configuration (JSON) files for popularly used variant callers:
 ```r
-# MuTect2
+# MuTect2 GATK4
+mutect2.config.file <- system.file("config", "GATK4_Mutect2_config_Tumor_Normal_SB.json", package = "FIREVAT")
+
+# MuTect2 GATK3
 mutect2.config.file <- system.file("config", "MuTect2_Filtering_Params.json", package = "FIREVAT")
 
 # Muse
@@ -140,6 +143,39 @@ Based on our validation studies, we suggest using ```FIREVAT``` in the following
 <p float="left">
   <img src="inst/img/FIREVAT_Suggested_Workflow.png" width="100%"/>
 </p>
+
+
+## Quick start
+
+A wrapper script is available for a minimal pipeline at `scripts/firevat_run_minimal.R`
+
+```bash
+Rscript firevat_run_minimal.R \
+  --vcf <input.vcf> \
+  --outdir <output_directory>
+```
+
+This runs FIREVAT with default settings. To customize:
+
+```bash
+Rscript firevat_run_minimal.R \
+  --vcf <input.vcf> \
+  --outdir <output_directory> \
+  --config <config.json> \
+  --num-cores <N> \
+  --genome <hg38|hg19|mm10>
+```
+
+### Arguments
+
+| Flag | Required | Default | Description |
+|------|----------|---------|-------------|
+| `--vcf` | **Yes** | — | Path to input VCF file |
+| `--outdir` | **Yes** | — | Output directory (created if it doesn't exist) |
+| `--config` | No | packaged `GATK4_Mutect2_config_Tumor_Normal_SB.json` | Path to FIREVAT config file |
+| `--num-cores` | No | `2` | Number of CPU cores |
+| `--genome` | No | `hg38` | Reference genome: `hg38`, `hg19`, or `mm10` |
+```
 
 ## Paper
 
