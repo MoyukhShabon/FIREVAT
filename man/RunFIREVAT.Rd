@@ -49,6 +49,7 @@ RunFIREVAT(
   report = TRUE,
   save.rdata = TRUE,
   save.tsv = TRUE,
+  save.scores = TRUE,
   report.format = "html",
   verbose = TRUE
 )
