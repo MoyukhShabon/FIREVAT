@@ -35,3 +35,4 @@ dependencies:
   - r-irkernel
   - r-optparse
   - r-reshape2
+  - r-tictoc
